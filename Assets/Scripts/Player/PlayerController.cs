@@ -2,6 +2,7 @@ using UnityEngine;
 using TMPro;
 using System.Collections;
 
+
 public class PlayerController : MonoBehaviour
 {
     [SerializeField] private SightVector _sightVector; // Класс прицела.
@@ -10,6 +11,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float _time; // вреия для отработки корутины
     [SerializeField] private TMP_Text _countBallText; // текст коичества шаров игрока
     [SerializeField] private int _countBall = 15; // количество шаров игрока (наминальное)
+    [SerializeField] private GameController _gameController;
     private bool _Open = true; // флаг нажатия и отпускания кнопки 
 
     private Vector2 direction; // вектор для передачи из прицела шарам
@@ -35,7 +37,7 @@ public class PlayerController : MonoBehaviour
     {
         if (!Open) return;
         
-            if (Input.GetMouseButtonDown(0))
+            if (Input.GetMouseButtonDown(0)) // не стал работать через touc систему что бы избавится от лишних проверок.
             {
                 StopCoroutine(BallPush());
                 IsDraging = true;
@@ -133,4 +135,6 @@ public class PlayerController : MonoBehaviour
         }
      
     }
+
+   
 }

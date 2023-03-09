@@ -1,20 +1,26 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 
-public class GameController  : MonoBehaviour
+public class GameController  : MonoBehaviour, IPointerDownHandler
 {
     [SerializeField] private PlayerController _playerController;
     [SerializeField] private PoolBall _poolBall;
     [SerializeField] private GameObject _losseMenu;
     private SceneController _sceneController;
+    private int _plusSpeed = 1;
     private void Awake()
     {
         _sceneController = GetComponent<SceneController>();
     }
+
+    public void OnPointerDown(PointerEventData eventData) // візов что бы не обрабатывать глобальное нажатие и метод отработал коректно
+    {
+        eventData.useDragThreshold = false; // прекращение передачи нажатия посло отработки метода
+        ReturnBall();
+        
+    }
     public void ReturnBall() // Возврат мячей в исходную точку.
     {
-        if(_playerController.Open == false)
-        {
-            _playerController.IsDraging = false;
             foreach (var item in _poolBall.PoolBalls)
             {
                 item.transform.position = new Vector2(0, 0);
@@ -23,12 +29,12 @@ public class GameController  : MonoBehaviour
                     item.SetActive(false);
                 }
             }
-            _playerController.Open = false;
             foreach (var item in _poolBall.PoolRigidBody)
             {
                 item.velocity = item.velocity * 0;
             }
-        }
+            _playerController.Stop();
+        
       
     }
     public void ReloadLvl() //Перезагрузка уровня
@@ -37,11 +43,16 @@ public class GameController  : MonoBehaviour
     }
     public void SpeedBallPlus()// Добавляю скорость для шариков.
     {
-        int plusSpeed = 2;
-        foreach (var item in _poolBall.PoolRigidBody)
+        
+        if(_plusSpeed <=2)
         {
-            item.velocity  = item.velocity * plusSpeed;
+            _plusSpeed++;
+            foreach (var item in _poolBall.PoolRigidBody)
+            {
+                item.velocity = item.velocity * _plusSpeed;
+            }
         }
+      
     }
     public  void NextLevel()
     {
@@ -54,4 +65,6 @@ public class GameController  : MonoBehaviour
             _losseMenu.SetActive(true);
         }
     }
+
+   
 }

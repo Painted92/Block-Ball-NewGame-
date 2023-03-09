@@ -6,8 +6,8 @@ public class SightVector : MonoBehaviour
 	[SerializeField] GameObject dotsParent; // родительский объект для точек
 	[SerializeField] GameObject dotPrefab; // префаб точки
 	[SerializeField] private float dotSpacing;
-	[SerializeField] [Range(0.01f, 0.3f)] float dotMinScale;// минимальный размер точки 
-	[SerializeField] [Range(0.01f, 1f)] float dotMaxScale;// максимальный размер точки
+	[SerializeField] [Range(0.001f, 0.3f)] float dotMinScale;// минимальный размер точки 
+	[SerializeField] [Range(0.001f, 1f)] float dotMaxScale;// максимальный размер точки
 	private float max_y;
 	private	Transform[] dotsList; // лист точек
     private	Vector2 position;
