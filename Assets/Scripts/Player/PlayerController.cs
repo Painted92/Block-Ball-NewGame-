@@ -5,21 +5,21 @@ using System.Collections;
 
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField] private SightVector _sightVector; // Класс прицела.
+    [SerializeField] private SightParticles _sightVector; // Класс прицела.
     [SerializeField] private PoolBall _poolBall; // класс пула шарок
     [SerializeField] private float _ballSpeed = 10.0f; // скоость задающаяся шарам 
-    [SerializeField] private float _time; // вреия для отработки корутины
+    [SerializeField] private float _coroutineTime; // вреия для отработки корутины
     [SerializeField] private TMP_Text _countBallText; // текст коичества шаров игрока
     [SerializeField] private int _countBall = 15; // количество шаров игрока (наминальное)
     [SerializeField] private GameController _gameController;
     private bool _Open = true; // флаг нажатия и отпускания кнопки 
 
-    private Vector2 direction; // вектор для передачи из прицела шарам
-    private bool isDraging; // флаг прицела
+    private Vector2 _ballVectorDirect; // вектор для передачи из прицела шарам
+    private bool _isMoving; // флаг прицела
 
     public int CountBall { get => _countBall; set => _countBall = value; }
     public bool Open { get => _Open; set => _Open = value; }
-    public bool IsDraging { get => isDraging; set => isDraging = value; }
+    public bool IsMoving { get => _isMoving; set => _isMoving = value; }
 
     void Update()
     {
@@ -40,20 +40,20 @@ public class PlayerController : MonoBehaviour
             if (Input.GetMouseButtonDown(0)) // не стал работать через touc систему что бы избавится от лишних проверок.
             {
                 StopCoroutine(BallPush());
-                IsDraging = true;
+                IsMoving = true;
                 _sightVector.SightShow();
             }
 
             if (Input.GetMouseButtonUp(0))
             {
-                IsDraging = false;
+                IsMoving = false;
                 _sightVector.SightHide();
-                if (direction.y >= 0)
+                if (_ballVectorDirect.y >= 0)
                 {
                     StartCoroutine(BallPush());
                 }
             }
-            if (IsDraging)
+            if (IsMoving)
             {
                 OnDrag();
             }
@@ -64,11 +64,11 @@ public class PlayerController : MonoBehaviour
     {
         Vector2 _clickPosition;
         _clickPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        direction = (_clickPosition - (Vector2)transform.position).normalized;
+        _ballVectorDirect = (_clickPosition - (Vector2)transform.position).normalized;
 
-        if (direction.y >= 0)
+        if (_ballVectorDirect.y >= 0)
         {
-            _sightVector.VectorDot(transform.position, direction * _ballSpeed / 5);
+            _sightVector.VectorParticles(transform.position, _ballVectorDirect * _ballSpeed / 5);
             _sightVector.SightShow();
         }
         else
@@ -81,12 +81,12 @@ public class PlayerController : MonoBehaviour
     {
         for (int i = 1; (CountBall + 1) != i; i++)
         
-            if (!IsDraging)
+            if (!IsMoving)
             { 
                     _poolBall.PoolBalls[i].SetActive(true);
-                    _poolBall.PoolVector[i].ball_direction = direction;
-                    _poolBall.PoolRigidBody[i].velocity = direction * _ballSpeed;
-                yield return new WaitForSeconds(_time);
+                    _poolBall.PoolVector[i].ball_direction = _ballVectorDirect;
+                    _poolBall.PoolRigidBody[i].velocity = _ballVectorDirect * _ballSpeed;
+                yield return new WaitForSeconds(_coroutineTime);
             }
         
     }

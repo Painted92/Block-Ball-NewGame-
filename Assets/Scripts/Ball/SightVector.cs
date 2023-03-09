@@ -2,62 +2,63 @@ using UnityEngine;
 
 public class SightVector : MonoBehaviour
 {
-	[SerializeField] private int dotsNumber;  //Количество точек в прицеле
-	[SerializeField] GameObject dotsParent; // родительский объект для точек
-	[SerializeField] GameObject dotPrefab; // префаб точки
-	[SerializeField] private float dotSpacing;
-	[SerializeField] [Range(0.001f, 0.3f)] float dotMinScale;// минимальный размер точки 
-	[SerializeField] [Range(0.001f, 1f)] float dotMaxScale;// максимальный размер точки
-	private float max_y;
-	private	Transform[] dotsList; // лист точек
-    private	Vector2 position;
-    private	float time;
+    [SerializeField] private int dotsNumber = 10; // Количество точек в прицеле
+    [SerializeField] private GameObject dotsParent; // Родительский объект для точек
+    [SerializeField] private GameObject dotPrefab; // Префаб точки
+    [SerializeField] private float dotSpacing = 0.1f;
+    [SerializeField] [Range(0.001f, 0.3f)] private float dotMinScale = 0.01f; // Минимальный размер точки 
+    [SerializeField] [Range(0.001f, 1f)] private float dotMaxScale = 0.3f; // Максимальный размер точки
 
-	void Start()
-	{
-		SightHide();
-		SizeDot();
-	}
+    private Transform[] dotsList; // Лист точек
+    private float max_y;
+    private float scaleFactor;
+    private Vector2 position;
+    private float time;
 
-	void SizeDot() // меод размера точек
-	{
-		dotsList = new Transform[dotsNumber];
+    private void Start()
+    {
+        SightHide();
+        CreateDots();
+    }
 
-		float scale = dotMaxScale;
-		float scaleFactor = scale / dotsNumber;
+    private void CreateDots()
+    {
+        dotsList = new Transform[dotsNumber];
+        float scale = dotMaxScale;
+        scaleFactor = scale / dotsNumber;
 
-		for (int i = 0; i < dotsNumber; i++)
-		{
-			dotsList[i] = Instantiate(dotPrefab, null).transform;
-			dotsList[i].parent = dotsParent.transform;
+        for (int i = 0; i < dotsNumber; i++)
+        {
+            GameObject dotObject = Instantiate(dotPrefab, dotsParent.transform);
+            Transform dotTransform = dotObject.transform;
+            dotsList[i] = dotTransform;
 
-			dotsList[i].localScale = Vector3.one * scale;
-			if (scale > dotMinScale)
-				scale -= scaleFactor;
-		}
-	}
+            dotTransform.localScale = Vector3.one * scale;
+            if (scale > dotMinScale)
+                scale -= scaleFactor;
+        }
+    }
 
-	public void VectorDot(Vector2 dotPoss, Vector2 force) // метод предачи направления
-	{
-		time = dotSpacing;
-		for (int i = 0; i < dotsNumber; i++)
-		{
-			position.x = (dotPoss.x + force.x * time);
-			position.y = (dotPoss.y + force.y * time);
-			dotsList[i].position = position;
-			time += dotSpacing;
-			max_y = position.y;
-		}
+    public void VectorDot(Vector2 dotPos, Vector2 force)
+    {
+        time = dotSpacing;
+        for (int i = 0; i < dotsNumber; i++)
+        {
+            position.x = (dotPos.x + force.x * time);
+            position.y = (dotPos.y + force.y * time);
+            dotsList[i].position = position;
+            time += dotSpacing;
+            max_y = position.y;
+        }
+    }
 
-	}
+    public void SightShow()
+    {
+        dotsParent.SetActive(true);
+    }
 
-	public void SightShow() // метод показа прицела
-	{
-		dotsParent.SetActive(true);
-	}
-
-	public void SightHide()// метод скрытия прицела
-	{
-		dotsParent.SetActive(false);
-	}
+    public void SightHide()
+    {
+        dotsParent.SetActive(false);
+    }
 }

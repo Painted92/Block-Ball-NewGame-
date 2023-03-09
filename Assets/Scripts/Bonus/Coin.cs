@@ -13,8 +13,8 @@ public class Coin : BallEvent
 
     private void CoinCounter() //Добавление коина и вывод его в текст
     {
-        CoinCount++;
-        _coinText.text = $"X{CoinCount}";
-        _lvlCountTextWinMenu.text = $"X{CoinCount}";
+       _coinCount++;
+        _coinText.text = $"X{_coinCount}";
+        _lvlCountTextWinMenu.text = $"X{_coinCount}";
     }
 }

@@ -10,11 +10,11 @@ public class DorOpen : BallEvent
         other.gameObject.SetActive(false);
         OffBall();
         _winMenu.SetActive(true);
-        _lvlCountText.text = $"Level:{LvlCount}";
+        _lvlCountText.text = $"Level:{_lvlCount}";
     }
     private void OffBall() // Перебираю пулл объектов и перевожу их в начальную координату.
     {
-        LvlCount++;
+        _lvlCount++;
         foreach (var item in _poolBall.PoolBalls)
         {
             item.SetActive(false);
